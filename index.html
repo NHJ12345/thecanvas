@@ -48,7 +48,7 @@
   .sidebar {
     position: fixed; top: 56px; left: 0; bottom: 0; width: 220px;
     background: var(--surface); border-right: 1px solid var(--border);
-    overflow-y: auto; padding: 20px 0;
+    overflow-y: auto; padding: 20px 0 80px;
   }
   .sidebar::-webkit-scrollbar { width: 4px; }
   .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
@@ -69,6 +69,21 @@
     padding: 2px 7px; border-radius: 999px; min-width: 22px; text-align: center;
   }
   .cat-btn.active .cat-count { background: var(--green); color: #000; }
+  .cat-row { display: flex; align-items: center; }
+  .cat-del-btn {
+    background: none; border: none; color: transparent; cursor: pointer;
+    font-size: 14px; padding: 0 6px 0 0; line-height: 1; transition: color .15s;
+  }
+  .cat-btn:hover .cat-del-btn { color: var(--border); }
+  .cat-del-btn:hover { color: #f3727f !important; }
+  .btn-add-cat {
+    display: flex; align-items: center; gap: 6px;
+    width: calc(100% - 24px); margin: 12px 12px 0;
+    background: none; border: 1px dashed var(--border); color: var(--silver);
+    padding: 8px 14px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    font-family: var(--font); transition: all .2s;
+  }
+  .btn-add-cat:hover { border-color: var(--green); color: var(--green); }
 
   /* ── MAIN ─────────────────────────────────────── */
   .main { margin-left: 220px; padding: 80px 28px 28px; min-height: 100vh; }
@@ -76,9 +91,18 @@
     display: flex; align-items: baseline; justify-content: space-between;
     margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;
   }
+  .section-header-left { display: flex; align-items: baseline; }
   .section-title { font-size: 22px; font-weight: 700; }
   .section-sub { font-size: 12px; color: var(--silver); margin-left: 10px; }
+  .section-header-right { display: flex; align-items: center; gap: 12px; }
   .section-count { font-size: 12px; color: var(--silver); }
+  .btn-search-fill {
+    display: flex; align-items: center; gap: 6px;
+    background: none; border: 1px solid var(--border); color: var(--silver);
+    font-size: 12px; font-weight: 600; padding: 7px 16px; border-radius: 999px;
+    cursor: pointer; font-family: var(--font); transition: all .2s;
+  }
+  .btn-search-fill:hover { border-color: var(--green); color: var(--green); }
 
   /* ── GRID ─────────────────────────────────────── */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
@@ -90,51 +114,15 @@
     cursor: pointer;
   }
   .card:hover { border-color: var(--green); transform: translateY(-2px); }
-  .card-thumb {
-    position: relative; padding-top: 56.25%; background: var(--mid);
-    overflow: hidden;
-  }
-  .card-thumb iframe {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
-  }
-  .card-thumb .thumb-overlay {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.0); transition: background .2s;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .card:hover .thumb-overlay { background: rgba(0,0,0,0.1); }
-  .card-thumb .play-btn {
-    width: 52px; height: 52px; background: rgba(30,215,96,0.9);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    opacity: 0; transition: opacity .2s; pointer-events: none;
-  }
-  .card:hover .play-btn { opacity: 1; }
-  .play-btn svg { width: 20px; height: 20px; fill: #000; margin-left: 3px; }
-  .card-body { padding: 14px 16px; }
-  .card-cat { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-  .card-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
-  .card-desc { font-size: 12px; color: var(--silver); line-height: 1.5; }
-  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
-  .card-source { font-size: 10px; color: var(--border); letter-spacing: 0.5px; }
-  .card-del {
-    background: none; border: none; color: var(--border); font-size: 16px; cursor: pointer;
-    padding: 2px 6px; border-radius: 4px; transition: color .2s, background .2s;
-    line-height: 1;
-  }
-  .card-del:hover { color: #f3727f; background: rgba(243,114,127,0.1); }
-
-  /* ── EMBED PLACEHOLDER ────────────────────────── */
-  .yt-thumb {
-    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    object-fit: cover; cursor: pointer;
-  }
+  .card-thumb { position: relative; padding-top: 56.25%; background: var(--mid); overflow: hidden; }
+  .card-thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
   .yt-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   .yt-wrap.loaded iframe { display: block; }
   .yt-wrap iframe { display: none; width: 100%; height: 100%; border: none; }
   .yt-preview {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
     background: var(--mid); display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 10px; cursor: pointer;
+    cursor: pointer;
   }
   .yt-preview img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
   .yt-preview-btn {
@@ -145,8 +133,19 @@
   }
   .card:hover .yt-preview-btn { transform: scale(1.08); }
   .yt-preview-btn svg { width: 22px; height: 22px; fill: #000; margin-left: 4px; }
+  .card-body { padding: 14px 16px; }
+  .card-cat { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .card-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: var(--silver); line-height: 1.5; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .card-source { font-size: 10px; color: var(--border); letter-spacing: 0.5px; }
+  .card-del {
+    background: none; border: none; color: var(--border); font-size: 16px; cursor: pointer;
+    padding: 2px 6px; border-radius: 4px; transition: color .2s, background .2s; line-height: 1;
+  }
+  .card-del:hover { color: #f3727f; background: rgba(243,114,127,0.1); }
 
-  /* ── ADD MODAL ────────────────────────────────── */
+  /* ── MODAL (공통) ────────────────────────────── */
   .modal-overlay {
     position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
     display: flex; align-items: center; justify-content: center;
@@ -184,6 +183,89 @@
   }
   .btn-save:hover { opacity: .85; }
 
+  /* ── SEARCH OVERLAY ───────────────────────────── */
+  .search-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.88); z-index: 300;
+    display: flex; align-items: flex-start; justify-content: center;
+    padding-top: 56px; opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .search-overlay.open { opacity: 1; pointer-events: all; }
+  .search-panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    width: 800px; max-width: 94vw; max-height: calc(100vh - 80px);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .search-panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .search-panel-head h3 { font-size: 16px; font-weight: 700; }
+  .btn-close-overlay {
+    background: none; border: none; color: var(--silver); font-size: 24px;
+    cursor: pointer; line-height: 1; padding: 0 4px; transition: color .2s;
+  }
+  .btn-close-overlay:hover { color: var(--white); }
+  .search-input-row {
+    display: flex; gap: 10px; padding: 16px 24px;
+    border-bottom: 1px solid var(--border); flex-shrink: 0;
+  }
+  .search-q {
+    flex: 1; background: var(--card); border: 1px solid var(--border); color: var(--white);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; font-family: var(--font);
+    outline: none; transition: border-color .2s;
+  }
+  .search-q:focus { border-color: var(--green); }
+  .search-q::placeholder { color: var(--silver); }
+  .btn-do-search {
+    background: var(--green); color: #000; font-weight: 700; border: none;
+    padding: 10px 22px; border-radius: 6px; cursor: pointer; font-size: 13px;
+    font-family: var(--font); white-space: nowrap; transition: opacity .2s;
+  }
+  .btn-do-search:hover { opacity: .85; }
+  .btn-do-search:disabled { opacity: .4; cursor: not-allowed; }
+  .search-results-wrap { flex: 1; overflow-y: auto; padding: 8px 24px; }
+  .search-results-wrap::-webkit-scrollbar { width: 4px; }
+  .search-results-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .search-result-row {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 0; border-bottom: 1px solid var(--mid);
+  }
+  .search-result-row:last-child { border-bottom: none; }
+  .s-thumb {
+    width: 128px; height: 72px; border-radius: 4px; object-fit: cover;
+    background: var(--mid); flex-shrink: 0; cursor: pointer;
+  }
+  .s-info { flex: 1; min-width: 0; }
+  .s-title {
+    font-size: 13px; font-weight: 600; line-height: 1.4;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer;
+  }
+  .s-title:hover { color: var(--green); }
+  .s-src { font-size: 11px; color: var(--silver); margin-top: 2px; }
+  .s-desc {
+    font-size: 11px; color: var(--silver); margin-top: 4px; line-height: 1.4;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .btn-add-r {
+    background: none; border: 1px solid var(--border); color: var(--silver); font-size: 11px;
+    font-weight: 700; padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    white-space: nowrap; transition: all .2s; flex-shrink: 0;
+  }
+  .btn-add-r:hover { border-color: var(--green); color: var(--green); }
+  .btn-add-r.added { border-color: var(--green); color: var(--green); background: rgba(30,215,96,.08); cursor: default; }
+  .search-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px; border-top: 1px solid var(--border); flex-shrink: 0;
+  }
+  .search-foot-count { font-size: 12px; color: var(--silver); }
+  .btn-add-all {
+    background: var(--green); color: #000; font-weight: 700; border: none;
+    padding: 8px 18px; border-radius: 999px; cursor: pointer; font-size: 12px;
+    font-family: var(--font); transition: opacity .2s;
+  }
+  .btn-add-all:hover { opacity: .85; }
+  .search-msg { text-align: center; padding: 40px 20px; color: var(--silver); font-size: 13px; line-height: 1.6; }
+
   /* ── EMPTY STATE ──────────────────────────────── */
   .empty { text-align: center; padding: 60px 20px; color: var(--silver); }
   .empty-icon { font-size: 40px; margin-bottom: 12px; }
@@ -197,11 +279,7 @@
     .main { margin-left: 0; }
     .grid { grid-template-columns: 1fr; }
     .search-input { width: 140px; }
-    .hamburger {
-      display: flex; align-items: center; justify-content: center;
-      background: none; border: none; color: var(--white); cursor: pointer;
-      padding: 6px; margin-right: 8px;
-    }
+    .hamburger { display: flex; align-items: center; justify-content: center; background: none; border: none; color: var(--white); cursor: pointer; padding: 6px; margin-right: 8px; }
   }
   @media (min-width: 769px) { .hamburger { display: none; } }
 </style>
@@ -226,20 +304,32 @@
 <div class="sidebar" id="sidebar">
   <div class="cat-group-title">카테고리</div>
   <div id="catList"></div>
+  <button class="btn-add-cat" onclick="openAddCatModal()">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor">
+      <path d="M6.5 1.5a.5.5 0 0 0-1 0V5.5H1.5a.5.5 0 0 0 0 1H5.5v4a.5.5 0 0 0 1 0V6.5h4a.5.5 0 0 0 0-1H6.5V1.5z"/>
+    </svg>
+    카테고리 추가
+  </button>
 </div>
 
 <div class="main">
   <div class="section-header">
-    <div>
+    <div class="section-header-left">
       <span class="section-title" id="sectionTitle">전체</span>
       <span class="section-sub" id="sectionSub"></span>
     </div>
-    <span class="section-count" id="sectionCount"></span>
+    <div class="section-header-right">
+      <span class="section-count" id="sectionCount"></span>
+      <button class="btn-search-fill" id="btnSearchFill" onclick="openSearchOverlay()" style="display:none">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5.5" cy="5.5" r="4.5"/><line x1="8.5" y1="8.5" x2="12" y2="12"/></svg>
+        검색으로 채우기
+      </button>
+    </div>
   </div>
   <div class="grid" id="grid"></div>
 </div>
 
-<!-- Add Modal -->
+<!-- ── 레퍼런스 수동 추가 Modal ── -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal">
     <h2>레퍼런스 추가</h2>
@@ -266,30 +356,80 @@
   </div>
 </div>
 
+<!-- ── 카테고리 추가 Modal ── -->
+<div class="modal-overlay" id="addCatOverlay">
+  <div class="modal">
+    <h2>카테고리 추가</h2>
+    <div class="form-row">
+      <label class="form-label">카테고리 이름</label>
+      <input type="text" class="form-input" id="newCatLabel" placeholder="예: 럭셔리 브랜드 필름"
+        onkeydown="if(event.key==='Enter')saveNewCat()">
+    </div>
+    <div class="form-row">
+      <label class="form-label">설명 (선택)</label>
+      <input type="text" class="form-input" id="newCatDesc" placeholder="예: 명품 브랜드 영상 레퍼런스"
+        onkeydown="if(event.key==='Enter')saveNewCat()">
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddCatModal()">취소</button>
+      <button class="btn-save" onclick="saveNewCat()">추가</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── YouTube 검색 Overlay ── -->
+<div id="searchOverlay" class="search-overlay">
+  <div class="search-panel">
+    <div class="search-panel-head">
+      <h3 id="searchPanelTitle">레퍼런스 검색</h3>
+      <button class="btn-close-overlay" onclick="closeSearchOverlay()">×</button>
+    </div>
+    <div class="search-input-row">
+      <input type="text" class="search-q" id="searchQuery"
+        placeholder="예: anamorphic LED billboard 2024, luxury brand film"
+        onkeydown="if(event.key==='Enter')doSearch()">
+      <button class="btn-do-search" id="btnDoSearch" onclick="doSearch()">검색</button>
+    </div>
+    <div class="search-results-wrap" id="searchResultsWrap">
+      <div class="search-msg">검색어를 입력하고 검색을 눌러주세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>
+    </div>
+    <div class="search-footer" id="searchFooter" style="display:none">
+      <span class="search-foot-count" id="searchCount"></span>
+      <button class="btn-add-all" onclick="addAllSearchResults()">전체 추가</button>
+    </div>
+  </div>
+</div>
+
 <script src="data.js"></script>
 <script>
-// ── DATA ──────────────────────────────────────────────────────────
+// ── CATEGORIES ────────────────────────────────────────────────────
 const CATEGORIES = [
-  { id: 'all',     label: '전체',              sub: '' },
-  { id: 'ooh',     label: 'OOH / 아나모픽',    sub: '3D LED 아나모픽 옥외 광고' },
-  { id: 'interactive', label: '인터랙티브',    sub: '관람객 참여형 인스톨레이션' },
-  { id: 'cg3d',    label: '영상 광고 (3D CG)', sub: '하이엔드 3D CG 브랜드 영상' },
-  { id: 'cg2d',    label: '영상 광고 (2D CG)', sub: '2D 모션그래픽 브랜드 필름' },
+  { id: 'all',               label: '전체',              sub: '' },
+  { id: 'ooh',              label: 'OOH / 아나모픽',    sub: '3D LED 아나모픽 옥외 광고' },
+  { id: 'interactive',      label: '인터랙티브',         sub: '관람객 참여형 인스톨레이션' },
+  { id: 'cg3d',             label: '영상 광고 (3D CG)',  sub: '하이엔드 3D CG 브랜드 영상' },
+  { id: 'cg2d',             label: '영상 광고 (2D CG)',  sub: '2D 모션그래픽 브랜드 필름' },
   { id: 'exhibition_content', label: '전시 영상 콘텐츠', sub: 'LED 전시 미디어 콘텐츠' },
   { id: 'exhibition_booth',   label: '전시 부스 제작',   sub: '브랜드 부스·체험 공간' },
-  { id: 'interior', label: '인테리어',          sub: '럭셔리 리테일·팝업 공간' },
-  { id: 'lg',      label: '브랜드 — LG',        sub: 'LG 전시·캠페인' },
-  { id: 'samsung', label: '브랜드 — 삼성',      sub: '삼성 전시·캠페인' },
-  { id: 'apple',   label: '브랜드 — 애플',      sub: 'Apple 리테일·이벤트' },
+  { id: 'interior',         label: '인테리어',           sub: '럭셔리 리테일·팝업 공간' },
+  { id: 'lg',               label: '브랜드 — LG',        sub: 'LG 전시·캠페인' },
+  { id: 'samsung',          label: '브랜드 — 삼성',      sub: '삼성 전시·캠페인' },
+  { id: 'apple',            label: '브랜드 — 애플',      sub: 'Apple 리테일·이벤트' },
 ];
 
-// DEFAULT_ITEMS and MB_VERSION are loaded from data.js
+// DEFAULT_ITEMS, MB_VERSION loaded from data.js
 
 // ── STATE ─────────────────────────────────────────────────────────
 let items = [];
+let customCats = [];
 let activeCat = 'all';
 let searchQuery = '';
 
+function getCategories() {
+  return [...CATEGORIES, ...customCats];
+}
+
+// ── PERSIST ───────────────────────────────────────────────────────
 function loadItems() {
   try {
     const ver = parseInt(localStorage.getItem('mb_ver') || '0');
@@ -304,7 +444,13 @@ function loadItems() {
 }
 function saveItems() { localStorage.setItem('mb_items', JSON.stringify(items)); }
 
-// ── RENDER ────────────────────────────────────────────────────────
+function loadCats() {
+  try { customCats = JSON.parse(localStorage.getItem('mb_cats') || '[]'); }
+  catch { customCats = []; }
+}
+function saveCats() { localStorage.setItem('mb_cats', JSON.stringify(customCats)); }
+
+// ── EMBED HELPERS ─────────────────────────────────────────────────
 function getVideoEmbed(type, vid) {
   if (type === 'youtube') return `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`;
   if (type === 'vimeo')   return `https://player.vimeo.com/video/${vid}?color=1ed760&byline=0&portrait=0`;
@@ -315,55 +461,62 @@ function getVideoThumb(type, vid) {
   return '';
 }
 
+// ── RENDER ────────────────────────────────────────────────────────
 function renderCats() {
+  const cats = getCategories();
   const counts = {};
-  CATEGORIES.forEach(c => counts[c.id] = 0);
+  cats.forEach(c => counts[c.id] = 0);
   items.forEach(it => {
-    counts['all']++;
-    if (counts[it.cat] !== undefined) counts[it.cat]++;
-    else counts[it.cat] = 1;
+    counts['all'] = (counts['all'] || 0) + 1;
+    counts[it.cat] = (counts[it.cat] || 0) + 1;
   });
 
   const list = document.getElementById('catList');
-  list.innerHTML = CATEGORIES.map(c => `
-    <button class="cat-btn ${activeCat === c.id ? 'active' : ''}" onclick="setCategory('${c.id}')">
-      <span>${c.label}</span>
-      <span class="cat-count">${activeCat === 'all' ? counts[c.id] || 0 : (counts[c.id] || 0)}</span>
-    </button>
-  `).join('');
+  list.innerHTML = cats.map(c => {
+    const isCustom = customCats.some(cc => cc.id === c.id);
+    return `
+    <div class="cat-row">
+      <button class="cat-btn ${activeCat === c.id ? 'active' : ''}" onclick="setCategory('${c.id}')" style="flex:1">
+        <span>${c.label}</span>
+        <span class="cat-count">${counts[c.id] || 0}</span>
+      </button>
+      ${isCustom ? `<button class="cat-del-btn" onclick="deleteCustomCat('${c.id}')" title="카테고리 삭제">×</button>` : ''}
+    </div>`;
+  }).join('');
 
-  // populate modal select
   const sel = document.getElementById('formCat');
-  sel.innerHTML = CATEGORIES.filter(c => c.id !== 'all').map(c =>
+  sel.innerHTML = cats.filter(c => c.id !== 'all').map(c =>
     `<option value="${c.id}">${c.label}</option>`
   ).join('');
 }
 
 function renderGrid() {
   const q = searchQuery.toLowerCase();
+  const cats = getCategories();
   const filtered = items.filter(it => {
     const matchCat = activeCat === 'all' || it.cat === activeCat;
     const matchQ = !q || it.title.toLowerCase().includes(q) || (it.desc||'').toLowerCase().includes(q);
     return matchCat && matchQ;
   });
 
-  const cat = CATEGORIES.find(c => c.id === activeCat) || CATEGORIES[0];
+  const cat = cats.find(c => c.id === activeCat) || cats[0];
   document.getElementById('sectionTitle').textContent = cat.label;
   document.getElementById('sectionSub').textContent = cat.sub ? ` — ${cat.sub}` : '';
   document.getElementById('sectionCount').textContent = `${filtered.length}개`;
+  document.getElementById('btnSearchFill').style.display = activeCat !== 'all' ? 'flex' : 'none';
 
   const grid = document.getElementById('grid');
   if (!filtered.length) {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
       <div class="empty-icon">🎬</div>
       <div class="empty-title">레퍼런스 없음</div>
-      <div class="empty-desc">우측 상단 "+ 추가" 버튼으로 영상을 추가하세요.</div>
+      <div class="empty-desc">"검색으로 채우기" 버튼 또는 상단 "+ 추가" 버튼으로 레퍼런스를 추가하세요.</div>
     </div>`;
     return;
   }
 
   grid.innerHTML = filtered.map(it => {
-    const catLabel = (CATEGORIES.find(c => c.id === it.cat) || {}).label || it.cat;
+    const catLabel = (cats.find(c => c.id === it.cat) || {}).label || it.cat;
     const thumb = getVideoThumb(it.type, it.vid);
     const embed = getVideoEmbed(it.type, it.vid);
     return `
@@ -423,6 +576,7 @@ function deleteItem(id) {
   saveItems(); render();
 }
 
+// ── 레퍼런스 수동 추가 Modal ──────────────────────────────────────
 function openModal() {
   document.getElementById('modalOverlay').classList.add('open');
   document.getElementById('formUrl').focus();
@@ -436,15 +590,12 @@ document.getElementById('modalOverlay').addEventListener('click', e => {
 });
 
 function parseVideoUrl(url) {
-  // YouTube
   let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
   if (m) return { type: 'youtube', vid: m[1] };
-  // Vimeo
-  m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (m) return { type: 'vimeo', vid: m[1] };
-  // YouTube shorts
   m = url.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/);
   if (m) return { type: 'youtube', vid: m[1] };
+  m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (m) return { type: 'vimeo', vid: m[1] };
   return null;
 }
 
@@ -453,27 +604,162 @@ function saveItem() {
   const title = document.getElementById('formTitle').value.trim();
   const cat   = document.getElementById('formCat').value;
   const desc  = document.getElementById('formDesc').value.trim();
-
   if (!url) { alert('URL을 입력하세요.'); return; }
   if (!title) { alert('제목을 입력하세요.'); return; }
-
   const parsed = parseVideoUrl(url);
   if (!parsed) { alert('YouTube 또는 Vimeo URL만 지원합니다.'); return; }
-
-  const newItem = {
-    id: 'u' + Date.now(),
-    cat, type: parsed.type, vid: parsed.vid, title, desc,
-    src: parsed.type === 'youtube' ? 'YouTube' : 'Vimeo'
-  };
-  items.unshift(newItem);
+  items.unshift({ id: 'u' + Date.now(), cat, type: parsed.type, vid: parsed.vid, title, desc,
+    src: parsed.type === 'youtube' ? 'YouTube' : 'Vimeo' });
   saveItems(); closeModal(); render();
 }
 
+// ── 카테고리 추가 ─────────────────────────────────────────────────
+function openAddCatModal() {
+  document.getElementById('addCatOverlay').classList.add('open');
+  document.getElementById('newCatLabel').focus();
+}
+function closeAddCatModal() {
+  document.getElementById('addCatOverlay').classList.remove('open');
+  document.getElementById('newCatLabel').value = '';
+  document.getElementById('newCatDesc').value = '';
+}
+document.getElementById('addCatOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('addCatOverlay')) closeAddCatModal();
+});
+
+function saveNewCat() {
+  const label = document.getElementById('newCatLabel').value.trim();
+  if (!label) { alert('카테고리 이름을 입력하세요.'); return; }
+  const id = 'c_' + Date.now().toString(36);
+  const sub = document.getElementById('newCatDesc').value.trim();
+  customCats.push({ id, label, sub });
+  saveCats();
+  closeAddCatModal();
+  activeCat = id;
+  render();
+}
+
+function deleteCustomCat(id) {
+  if (!confirm('카테고리를 삭제하면 해당 카테고리의 레퍼런스도 모두 삭제됩니다. 계속할까요?')) return;
+  customCats = customCats.filter(c => c.id !== id);
+  items = items.filter(it => it.cat !== id);
+  saveCats(); saveItems();
+  if (activeCat === id) activeCat = 'all';
+  render();
+}
+
+// ── YouTube 검색 Overlay ──────────────────────────────────────────
+let _searchResults = [];
+let _addedVids = new Set();
+
+function openSearchOverlay() {
+  const cat = getCategories().find(c => c.id === activeCat);
+  document.getElementById('searchPanelTitle').textContent =
+    `"${cat ? cat.label : activeCat}" 레퍼런스 검색`;
+  document.getElementById('searchOverlay').classList.add('open');
+  document.getElementById('searchQuery').focus();
+  document.getElementById('searchResultsWrap').innerHTML =
+    '<div class="search-msg">검색어를 입력하고 검색을 눌러주세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>';
+  document.getElementById('searchFooter').style.display = 'none';
+  _searchResults = [];
+  _addedVids = new Set(items.filter(it => it.cat === activeCat).map(it => it.vid));
+}
+
+function closeSearchOverlay() {
+  document.getElementById('searchOverlay').classList.remove('open');
+  document.getElementById('searchQuery').value = '';
+}
+document.getElementById('searchOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('searchOverlay')) closeSearchOverlay();
+});
+
+async function doSearch() {
+  const q = document.getElementById('searchQuery').value.trim();
+  if (!q) return;
+  const btn = document.getElementById('btnDoSearch');
+  const wrap = document.getElementById('searchResultsWrap');
+  btn.disabled = true; btn.textContent = '검색 중...';
+  wrap.innerHTML = '<div class="search-msg">검색 중...</div>';
+  document.getElementById('searchFooter').style.display = 'none';
+
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=20`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
+    _searchResults = data;
+    _renderSearchResults();
+  } catch(e) {
+    wrap.innerHTML = `<div class="search-msg" style="color:#f3727f">오류: ${e.message.replace(/\n/g,'<br>')}</div>`;
+  } finally {
+    btn.disabled = false; btn.textContent = '검색';
+  }
+}
+
+function _renderSearchResults() {
+  const wrap = document.getElementById('searchResultsWrap');
+  if (!_searchResults.length) {
+    wrap.innerHTML = '<div class="search-msg">검색 결과가 없습니다. 다른 검색어를 시도해보세요.</div>';
+    return;
+  }
+  wrap.innerHTML = _searchResults.map((r, i) => {
+    const thumb = `https://img.youtube.com/vi/${r.vid}/mqdefault.jpg`;
+    const added = _addedVids.has(r.vid);
+    return `
+    <div class="search-result-row" id="sr-${i}">
+      <img class="s-thumb" src="${thumb}" alt="" onclick="window.open('https://youtu.be/${r.vid}','_blank')" loading="lazy">
+      <div class="s-info">
+        <div class="s-title" onclick="window.open('https://youtu.be/${r.vid}','_blank')">${r.title}</div>
+        <div class="s-src">${r.src}${r.published ? ' · ' + r.published : ''}</div>
+        ${r.desc ? `<div class="s-desc">${r.desc}</div>` : ''}
+      </div>
+      <button class="btn-add-r ${added ? 'added' : ''}" id="btn-sr-${i}"
+        onclick="addSearchResult(${i})" ${added ? 'disabled' : ''}>
+        ${added ? '추가됨' : '+ 추가'}
+      </button>
+    </div>`;
+  }).join('');
+  _updateSearchCount();
+  document.getElementById('searchFooter').style.display = 'flex';
+}
+
+function _updateSearchCount() {
+  const notAdded = _searchResults.filter(r => !_addedVids.has(r.vid)).length;
+  document.getElementById('searchCount').textContent =
+    `${_searchResults.length}개 결과 · 미추가 ${notAdded}개`;
+}
+
+function addSearchResult(i) {
+  const r = _searchResults[i];
+  if (!r || _addedVids.has(r.vid)) return;
+  const newItem = {
+    id: 'sr_' + r.vid,
+    cat: activeCat,
+    type: 'youtube',
+    vid: r.vid,
+    title: r.title,
+    desc: r.desc,
+    src: r.src,
+  };
+  items.unshift(newItem);
+  _addedVids.add(r.vid);
+  saveItems();
+  const btn = document.getElementById(`btn-sr-${i}`);
+  if (btn) { btn.textContent = '추가됨'; btn.classList.add('added'); btn.disabled = true; }
+  _updateSearchCount();
+  renderGrid();
+}
+
+function addAllSearchResults() {
+  _searchResults.forEach((_, i) => addSearchResult(i));
+}
+
+// ── MISC ──────────────────────────────────────────────────────────
 function toggleSidebar() {
   document.getElementById('sidebar').classList.toggle('open');
 }
 
 // ── INIT ──────────────────────────────────────────────────────────
+loadCats();
 loadItems();
 render();
 </script>
