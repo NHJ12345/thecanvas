@@ -70,12 +70,15 @@
   }
   .cat-btn.active .cat-count { background: var(--green); color: #000; }
   .cat-row { display: flex; align-items: center; }
-  .cat-del-btn {
+  .cat-action-btn {
     background: none; border: none; color: transparent; cursor: pointer;
-    font-size: 14px; padding: 0 6px 0 0; line-height: 1; transition: color .15s;
+    font-size: 14px; padding: 0 5px 0 0; line-height: 1;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: color .15s;
   }
-  .cat-btn:hover .cat-del-btn { color: var(--border); }
-  .cat-del-btn:hover { color: #f3727f !important; }
+  .cat-row:hover .cat-action-btn { color: var(--border); }
+  .cat-action-btn:hover { color: var(--silver) !important; }
+  .cat-action-btn.cat-del:hover { color: #f3727f !important; }
   .btn-add-cat {
     display: flex; align-items: center; gap: 6px;
     width: calc(100% - 24px); margin: 12px 12px 0;
@@ -115,7 +118,6 @@
   }
   .card:hover { border-color: var(--green); transform: translateY(-2px); }
   .card-thumb { position: relative; padding-top: 56.25%; background: var(--mid); overflow: hidden; }
-  .card-thumb iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
   .yt-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
   .yt-wrap.loaded iframe { display: block; }
   .yt-wrap iframe { display: none; width: 100%; height: 100%; border: none; }
@@ -192,7 +194,7 @@
   .search-overlay.open { opacity: 1; pointer-events: all; }
   .search-panel {
     background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
-    width: 800px; max-width: 94vw; max-height: calc(100vh - 80px);
+    width: 820px; max-width: 94vw; max-height: calc(100vh - 80px);
     display: flex; flex-direction: column; overflow: hidden;
   }
   .search-panel-head {
@@ -205,6 +207,47 @@
     cursor: pointer; line-height: 1; padding: 0 4px; transition: color .2s;
   }
   .btn-close-overlay:hover { color: var(--white); }
+
+  /* Auto-fill section */
+  .auto-fill-section {
+    padding: 14px 24px 12px; border-bottom: 1px solid var(--border);
+    background: var(--mid); flex-shrink: 0;
+  }
+  .auto-fill-top { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .auto-fill-label { font-size: 12px; font-weight: 700; color: var(--white); white-space: nowrap; }
+  .qty-row { display: flex; align-items: center; gap: 6px; flex: 1; }
+  .qty-label { font-size: 11px; color: var(--silver); white-space: nowrap; }
+  .qty-btns { display: flex; gap: 4px; }
+  .qty-btn {
+    background: var(--card); border: 1px solid var(--border); color: var(--silver);
+    padding: 4px 11px; border-radius: 999px; cursor: pointer; font-size: 11px; font-weight: 600;
+    font-family: var(--font); transition: all .15s;
+  }
+  .qty-btn:hover { border-color: var(--green); color: var(--white); }
+  .qty-btn.active { background: var(--green); border-color: var(--green); color: #000; font-weight: 700; }
+  .btn-auto-fill {
+    background: var(--green); color: #000; border: none; font-weight: 700;
+    padding: 8px 18px; border-radius: 999px; cursor: pointer; font-size: 12px;
+    font-family: var(--font); white-space: nowrap; transition: opacity .2s; flex-shrink: 0;
+  }
+  .btn-auto-fill:hover { opacity: .85; }
+  .btn-auto-fill:disabled { opacity: .4; cursor: not-allowed; }
+  .auto-query-preview {
+    font-size: 11px; color: var(--border); margin-top: 8px; font-style: italic; min-height: 14px;
+  }
+
+  /* Search divider */
+  .search-divider {
+    text-align: center; position: relative; flex-shrink: 0; padding: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .search-divider span {
+    display: inline-block; font-size: 11px; color: var(--border); letter-spacing: 0.5px;
+    background: var(--surface); padding: 0 10px;
+    position: relative; top: 9px;
+  }
+
+  /* Manual search */
   .search-input-row {
     display: flex; gap: 10px; padding: 16px 24px;
     border-bottom: 1px solid var(--border); flex-shrink: 0;
@@ -217,11 +260,11 @@
   .search-q:focus { border-color: var(--green); }
   .search-q::placeholder { color: var(--silver); }
   .btn-do-search {
-    background: var(--green); color: #000; font-weight: 700; border: none;
+    background: var(--card); color: var(--white); font-weight: 700; border: 1px solid var(--border);
     padding: 10px 22px; border-radius: 6px; cursor: pointer; font-size: 13px;
-    font-family: var(--font); white-space: nowrap; transition: opacity .2s;
+    font-family: var(--font); white-space: nowrap; transition: all .2s;
   }
-  .btn-do-search:hover { opacity: .85; }
+  .btn-do-search:hover { border-color: var(--green); color: var(--green); }
   .btn-do-search:disabled { opacity: .4; cursor: not-allowed; }
   .search-results-wrap { flex: 1; overflow-y: auto; padding: 8px 24px; }
   .search-results-wrap::-webkit-scrollbar { width: 4px; }
@@ -322,7 +365,7 @@
       <span class="section-count" id="sectionCount"></span>
       <button class="btn-search-fill" id="btnSearchFill" onclick="openSearchOverlay()" style="display:none">
         <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="5.5" cy="5.5" r="4.5"/><line x1="8.5" y1="8.5" x2="12" y2="12"/></svg>
-        검색으로 채우기
+        레퍼런스 검색
       </button>
     </div>
   </div>
@@ -356,10 +399,10 @@
   </div>
 </div>
 
-<!-- ── 카테고리 추가 Modal ── -->
+<!-- ── 카테고리 추가 / 수정 Modal ── -->
 <div class="modal-overlay" id="addCatOverlay">
   <div class="modal">
-    <h2>카테고리 추가</h2>
+    <h2 id="addCatTitle">카테고리 추가</h2>
     <div class="form-row">
       <label class="form-label">카테고리 이름</label>
       <input type="text" class="form-input" id="newCatLabel" placeholder="예: 럭셔리 브랜드 필름"
@@ -372,7 +415,7 @@
     </div>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeAddCatModal()">취소</button>
-      <button class="btn-save" onclick="saveNewCat()">추가</button>
+      <button class="btn-save" id="addCatSaveBtn" onclick="saveNewCat()">추가</button>
     </div>
   </div>
 </div>
@@ -384,14 +427,36 @@
       <h3 id="searchPanelTitle">레퍼런스 검색</h3>
       <button class="btn-close-overlay" onclick="closeSearchOverlay()">×</button>
     </div>
+
+    <!-- 자동 채우기 -->
+    <div class="auto-fill-section">
+      <div class="auto-fill-top">
+        <span class="auto-fill-label">자동 채우기</span>
+        <div class="qty-row">
+          <span class="qty-label">수량</span>
+          <div class="qty-btns" id="qtyBtns">
+            <button class="qty-btn" onclick="setQty(10)">10</button>
+            <button class="qty-btn active" onclick="setQty(20)">20</button>
+            <button class="qty-btn" onclick="setQty(30)">30</button>
+            <button class="qty-btn" onclick="setQty(50)">50</button>
+          </div>
+        </div>
+        <button class="btn-auto-fill" id="btnAutoFill" onclick="doAutoFill()">▶ 자동으로 채우기</button>
+      </div>
+      <div class="auto-query-preview" id="autoQueryPreview"></div>
+    </div>
+
+    <!-- 직접 검색 -->
+    <div class="search-divider"><span>또는 직접 검색</span></div>
     <div class="search-input-row">
       <input type="text" class="search-q" id="searchQuery"
         placeholder="예: anamorphic LED billboard 2024, luxury brand film"
         onkeydown="if(event.key==='Enter')doSearch()">
       <button class="btn-do-search" id="btnDoSearch" onclick="doSearch()">검색</button>
     </div>
+
     <div class="search-results-wrap" id="searchResultsWrap">
-      <div class="search-msg">검색어를 입력하고 검색을 눌러주세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>
+      <div class="search-msg">자동으로 채우거나, 직접 검색어를 입력하세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>
     </div>
     <div class="search-footer" id="searchFooter" style="display:none">
       <span class="search-foot-count" id="searchCount"></span>
@@ -417,6 +482,20 @@ const CATEGORIES = [
   { id: 'apple',            label: '브랜드 — 애플',      sub: 'Apple 리테일·이벤트' },
 ];
 
+// Auto-search query map for built-in categories
+const AUTO_QUERIES = {
+  ooh:               '3D anamorphic LED billboard OOH brand commercial',
+  interactive:       'interactive installation art brand immersive experience',
+  cg3d:              '3D CGI cinematic brand commercial VFX 2024',
+  cg2d:              '2D motion design animation brand commercial 2024',
+  exhibition_content:'LED exhibition media content art installation',
+  exhibition_booth:  'brand exhibition booth design experience',
+  interior:          'luxury retail interior design popup store',
+  lg:                'LG brand commercial campaign 2024',
+  samsung:           'Samsung brand commercial campaign 2024',
+  apple:             'Apple brand film commercial 2024',
+};
+
 // DEFAULT_ITEMS, MB_VERSION loaded from data.js
 
 // ── STATE ─────────────────────────────────────────────────────────
@@ -424,6 +503,8 @@ let items = [];
 let customCats = [];
 let activeCat = 'all';
 let searchQuery = '';
+let _editingCatId = null;
+let _autoFillQty = 20;
 
 function getCategories() {
   return [...CATEGORIES, ...customCats];
@@ -480,7 +561,12 @@ function renderCats() {
         <span>${c.label}</span>
         <span class="cat-count">${counts[c.id] || 0}</span>
       </button>
-      ${isCustom ? `<button class="cat-del-btn" onclick="deleteCustomCat('${c.id}')" title="카테고리 삭제">×</button>` : ''}
+      ${isCustom ? `
+        <button class="cat-action-btn" onclick="openEditCatModal('${c.id}')" title="수정">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M0 9.5V12h2.5l7.37-7.37-2.5-2.5L0 9.5zm11.71-6.79a.667.667 0 000-.94L10.23.29a.667.667 0 00-.94 0L8.13 1.5l2.5 2.5 1.08-1.08z"/></svg>
+        </button>
+        <button class="cat-action-btn cat-del" onclick="deleteCustomCat('${c.id}')" title="삭제">×</button>
+      ` : ''}
     </div>`;
   }).join('');
 
@@ -510,7 +596,7 @@ function renderGrid() {
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
       <div class="empty-icon">🎬</div>
       <div class="empty-title">레퍼런스 없음</div>
-      <div class="empty-desc">"검색으로 채우기" 버튼 또는 상단 "+ 추가" 버튼으로 레퍼런스를 추가하세요.</div>
+      <div class="empty-desc">"레퍼런스 검색" 버튼 또는 상단 "+ 추가" 버튼으로 레퍼런스를 추가하세요.</div>
     </div>`;
     return;
   }
@@ -613,12 +699,31 @@ function saveItem() {
   saveItems(); closeModal(); render();
 }
 
-// ── 카테고리 추가 ─────────────────────────────────────────────────
+// ── 카테고리 추가 / 수정 ──────────────────────────────────────────
 function openAddCatModal() {
+  _editingCatId = null;
+  document.getElementById('addCatTitle').textContent = '카테고리 추가';
+  document.getElementById('addCatSaveBtn').textContent = '추가';
+  document.getElementById('newCatLabel').value = '';
+  document.getElementById('newCatDesc').value = '';
   document.getElementById('addCatOverlay').classList.add('open');
   document.getElementById('newCatLabel').focus();
 }
+
+function openEditCatModal(id) {
+  const cat = customCats.find(c => c.id === id);
+  if (!cat) return;
+  _editingCatId = id;
+  document.getElementById('addCatTitle').textContent = '카테고리 수정';
+  document.getElementById('addCatSaveBtn').textContent = '수정';
+  document.getElementById('newCatLabel').value = cat.label;
+  document.getElementById('newCatDesc').value = cat.sub || '';
+  document.getElementById('addCatOverlay').classList.add('open');
+  document.getElementById('newCatLabel').focus();
+}
+
 function closeAddCatModal() {
+  _editingCatId = null;
   document.getElementById('addCatOverlay').classList.remove('open');
   document.getElementById('newCatLabel').value = '';
   document.getElementById('newCatDesc').value = '';
@@ -630,13 +735,22 @@ document.getElementById('addCatOverlay').addEventListener('click', e => {
 function saveNewCat() {
   const label = document.getElementById('newCatLabel').value.trim();
   if (!label) { alert('카테고리 이름을 입력하세요.'); return; }
-  const id = 'c_' + Date.now().toString(36);
   const sub = document.getElementById('newCatDesc').value.trim();
-  customCats.push({ id, label, sub });
-  saveCats();
-  closeAddCatModal();
-  activeCat = id;
-  render();
+
+  if (_editingCatId) {
+    const cat = customCats.find(c => c.id === _editingCatId);
+    if (cat) { cat.label = label; cat.sub = sub; }
+    saveCats();
+    closeAddCatModal();
+    render();
+  } else {
+    const id = 'c_' + Date.now().toString(36);
+    customCats.push({ id, label, sub });
+    saveCats();
+    closeAddCatModal();
+    activeCat = id;
+    render();
+  }
 }
 
 function deleteCustomCat(id) {
@@ -648,6 +762,52 @@ function deleteCustomCat(id) {
   render();
 }
 
+// ── 자동 채우기 ───────────────────────────────────────────────────
+function buildAutoQuery(cat) {
+  if (AUTO_QUERIES[cat.id]) return AUTO_QUERIES[cat.id];
+  // Custom category: build from label + sub
+  return `${cat.label} ${cat.sub || ''} marketing reference video`.trim();
+}
+
+function setQty(n) {
+  _autoFillQty = n;
+  document.querySelectorAll('.qty-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim() === String(n));
+  });
+}
+
+async function doAutoFill() {
+  const cat = getCategories().find(c => c.id === activeCat);
+  if (!cat) return;
+  const q = buildAutoQuery(cat);
+  const btn = document.getElementById('btnAutoFill');
+  const wrap = document.getElementById('searchResultsWrap');
+
+  btn.disabled = true;
+  btn.textContent = '검색 중...';
+  document.getElementById('autoQueryPreview').textContent = `검색어: "${q}"`;
+  wrap.innerHTML = '<div class="search-msg">자동으로 레퍼런스를 찾는 중...</div>';
+  document.getElementById('searchFooter').style.display = 'none';
+
+  try {
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
+    _searchResults = data;
+    _addedVids = new Set(items.filter(it => it.cat === activeCat).map(it => it.vid));
+    // Auto-add all
+    let added = 0;
+    _searchResults.forEach((_, i) => { if (addSearchResult(i)) added++; });
+    wrap.innerHTML = `<div class="search-msg" style="color:var(--green)">✓ ${added}개 레퍼런스가 "${cat.label}"에 추가되었습니다.</div>`;
+    document.getElementById('searchFooter').style.display = 'none';
+  } catch(e) {
+    wrap.innerHTML = `<div class="search-msg" style="color:#f3727f">오류: ${e.message.replace(/\n/g,'<br>')}</div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '▶ 자동으로 채우기';
+  }
+}
+
 // ── YouTube 검색 Overlay ──────────────────────────────────────────
 let _searchResults = [];
 let _addedVids = new Set();
@@ -656,10 +816,12 @@ function openSearchOverlay() {
   const cat = getCategories().find(c => c.id === activeCat);
   document.getElementById('searchPanelTitle').textContent =
     `"${cat ? cat.label : activeCat}" 레퍼런스 검색`;
+  document.getElementById('autoQueryPreview').textContent =
+    cat ? `자동 검색어: "${buildAutoQuery(cat)}"` : '';
   document.getElementById('searchOverlay').classList.add('open');
   document.getElementById('searchQuery').focus();
   document.getElementById('searchResultsWrap').innerHTML =
-    '<div class="search-msg">검색어를 입력하고 검색을 눌러주세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>';
+    '<div class="search-msg">자동으로 채우거나, 직접 검색어를 입력하세요.<br><small style="color:var(--border)">영어 검색어가 더 많은 결과를 가져옵니다</small></div>';
   document.getElementById('searchFooter').style.display = 'none';
   _searchResults = [];
   _addedVids = new Set(items.filter(it => it.cat === activeCat).map(it => it.vid));
@@ -683,7 +845,7 @@ async function doSearch() {
   document.getElementById('searchFooter').style.display = 'none';
 
   try {
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=20`);
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
     _searchResults = data;
@@ -730,8 +892,8 @@ function _updateSearchCount() {
 
 function addSearchResult(i) {
   const r = _searchResults[i];
-  if (!r || _addedVids.has(r.vid)) return;
-  const newItem = {
+  if (!r || _addedVids.has(r.vid)) return false;
+  items.unshift({
     id: 'sr_' + r.vid,
     cat: activeCat,
     type: 'youtube',
@@ -739,14 +901,14 @@ function addSearchResult(i) {
     title: r.title,
     desc: r.desc,
     src: r.src,
-  };
-  items.unshift(newItem);
+  });
   _addedVids.add(r.vid);
   saveItems();
   const btn = document.getElementById(`btn-sr-${i}`);
   if (btn) { btn.textContent = '추가됨'; btn.classList.add('added'); btn.disabled = true; }
   _updateSearchCount();
   renderGrid();
+  return true;
 }
 
 function addAllSearchResults() {
