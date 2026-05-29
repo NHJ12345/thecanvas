@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiro Moodboard — The Canvas</title>
+<style>
+  :root {
+    --bg: #121212;
+    --surface: #181818;
+    --mid: #1f1f1f;
+    --card: #252525;
+    --green: #1ed760;
+    --white: #ffffff;
+    --silver: #b3b3b3;
+    --border: #4d4d4d;
+    --font: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--white); font-family: var(--font); min-height: 100vh; }
+
+  /* ── NAV ──────────────────────────────────────── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(18,18,18,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 28px; height: 56px;
+  }
+  .nav-logo { font-size: 13px; font-weight: 700; letter-spacing: 2px; color: var(--white); }
+  .nav-logo span { color: var(--green); }
+  .nav-actions { display: flex; gap: 12px; align-items: center; }
+  .btn-add {
+    background: var(--green); color: #000; font-size: 12px; font-weight: 700;
+    padding: 7px 16px; border-radius: 999px; border: none; cursor: pointer;
+    letter-spacing: 0.5px; transition: opacity .2s;
+  }
+  .btn-add:hover { opacity: .85; }
+  .search-input {
+    background: var(--card); border: 1px solid var(--border); color: var(--white);
+    padding: 7px 14px; border-radius: 999px; font-size: 13px; width: 200px;
+    outline: none; transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--green); }
+  .search-input::placeholder { color: var(--silver); }
+
+  /* ── SIDEBAR ──────────────────────────────────── */
+  .sidebar {
+    position: fixed; top: 56px; left: 0; bottom: 0; width: 220px;
+    background: var(--surface); border-right: 1px solid var(--border);
+    overflow-y: auto; padding: 20px 0;
+  }
+  .sidebar::-webkit-scrollbar { width: 4px; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .cat-group-title {
+    font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--silver);
+    padding: 12px 20px 6px; text-transform: uppercase;
+  }
+  .cat-btn {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; padding: 9px 20px; background: none; border: none; cursor: pointer;
+    color: var(--silver); font-size: 13px; font-family: var(--font);
+    text-align: left; transition: background .15s, color .15s;
+  }
+  .cat-btn:hover { background: var(--card); color: var(--white); }
+  .cat-btn.active { background: var(--card); color: var(--green); font-weight: 700; }
+  .cat-count {
+    background: var(--border); color: var(--silver); font-size: 10px; font-weight: 700;
+    padding: 2px 7px; border-radius: 999px; min-width: 22px; text-align: center;
+  }
+  .cat-btn.active .cat-count { background: var(--green); color: #000; }
+
+  /* ── MAIN ─────────────────────────────────────── */
+  .main { margin-left: 220px; padding: 80px 28px 28px; min-height: 100vh; }
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px; border-bottom: 1px solid var(--border); padding-bottom: 16px;
+  }
+  .section-title { font-size: 22px; font-weight: 700; }
+  .section-sub { font-size: 12px; color: var(--silver); margin-left: 10px; }
+  .section-count { font-size: 12px; color: var(--silver); }
+
+  /* ── GRID ─────────────────────────────────────── */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+
+  /* ── CARD ─────────────────────────────────────── */
+  .card {
+    background: var(--card); border-radius: 8px; overflow: hidden;
+    border: 1px solid var(--border); transition: border-color .2s, transform .2s;
+    cursor: pointer;
+  }
+  .card:hover { border-color: var(--green); transform: translateY(-2px); }
+  .card-thumb {
+    position: relative; padding-top: 56.25%; background: var(--mid);
+    overflow: hidden;
+  }
+  .card-thumb iframe {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;
+  }
+  .card-thumb .thumb-overlay {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.0); transition: background .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .card:hover .thumb-overlay { background: rgba(0,0,0,0.1); }
+  .card-thumb .play-btn {
+    width: 52px; height: 52px; background: rgba(30,215,96,0.9);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .card:hover .play-btn { opacity: 1; }
+  .play-btn svg { width: 20px; height: 20px; fill: #000; margin-left: 3px; }
+  .card-body { padding: 14px 16px; }
+  .card-cat { font-size: 10px; font-weight: 700; color: var(--green); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .card-title { font-size: 14px; font-weight: 700; line-height: 1.4; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: var(--silver); line-height: 1.5; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .card-source { font-size: 10px; color: var(--border); letter-spacing: 0.5px; }
+  .card-del {
+    background: none; border: none; color: var(--border); font-size: 16px; cursor: pointer;
+    padding: 2px 6px; border-radius: 4px; transition: color .2s, background .2s;
+    line-height: 1;
+  }
+  .card-del:hover { color: #f3727f; background: rgba(243,114,127,0.1); }
+
+  /* ── EMBED PLACEHOLDER ────────────────────────── */
+  .yt-thumb {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; cursor: pointer;
+  }
+  .yt-wrap { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+  .yt-wrap.loaded iframe { display: block; }
+  .yt-wrap iframe { display: none; width: 100%; height: 100%; border: none; }
+  .yt-preview {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    background: var(--mid); display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 10px; cursor: pointer;
+  }
+  .yt-preview img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+  .yt-preview-btn {
+    position: relative; z-index: 1;
+    width: 56px; height: 56px; background: rgba(30,215,96,0.95);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    transition: transform .2s;
+  }
+  .card:hover .yt-preview-btn { transform: scale(1.08); }
+  .yt-preview-btn svg { width: 22px; height: 22px; fill: #000; margin-left: 4px; }
+
+  /* ── ADD MODAL ────────────────────────────────── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px; width: 480px; max-width: 90vw;
+    transform: translateY(16px); transition: transform .2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 20px; }
+  .form-row { margin-bottom: 14px; }
+  .form-label { font-size: 11px; font-weight: 700; color: var(--silver); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 6px; display: block; }
+  .form-input, .form-select, .form-textarea {
+    width: 100%; background: var(--card); border: 1px solid var(--border); color: var(--white);
+    padding: 10px 14px; border-radius: 6px; font-size: 13px; font-family: var(--font); outline: none;
+    transition: border-color .2s;
+  }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--green); }
+  .form-textarea { resize: vertical; min-height: 72px; }
+  .form-select option { background: var(--card); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+  .btn-cancel {
+    background: var(--card); color: var(--silver); border: 1px solid var(--border);
+    padding: 9px 20px; border-radius: 999px; cursor: pointer; font-size: 13px;
+    font-family: var(--font); transition: background .2s;
+  }
+  .btn-cancel:hover { background: var(--mid); }
+  .btn-save {
+    background: var(--green); color: #000; border: none; font-weight: 700;
+    padding: 9px 20px; border-radius: 999px; cursor: pointer; font-size: 13px;
+    font-family: var(--font); transition: opacity .2s;
+  }
+  .btn-save:hover { opacity: .85; }
+
+  /* ── EMPTY STATE ──────────────────────────────── */
+  .empty { text-align: center; padding: 60px 20px; color: var(--silver); }
+  .empty-icon { font-size: 40px; margin-bottom: 12px; }
+  .empty-title { font-size: 16px; font-weight: 700; color: var(--white); margin-bottom: 6px; }
+  .empty-desc { font-size: 13px; }
+
+  /* ── MOBILE ───────────────────────────────────── */
+  @media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); transition: transform .3s; z-index: 50; }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .grid { grid-template-columns: 1fr; }
+    .search-input { width: 140px; }
+    .hamburger {
+      display: flex; align-items: center; justify-content: center;
+      background: none; border: none; color: var(--white); cursor: pointer;
+      padding: 6px; margin-right: 8px;
+    }
+  }
+  @media (min-width: 769px) { .hamburger { display: none; } }
+</style>
+</head>
+<body>
+
+<nav>
+  <div style="display:flex;align-items:center;gap:8px">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <rect y="3" width="20" height="2" rx="1"/><rect y="9" width="20" height="2" rx="1"/><rect y="15" width="20" height="2" rx="1"/>
+      </svg>
+    </button>
+    <div class="nav-logo">HIRO <span>MOODBOARD</span></div>
+  </div>
+  <div class="nav-actions">
+    <input type="text" class="search-input" id="searchInput" placeholder="검색..." oninput="filterCards()">
+    <button class="btn-add" onclick="openModal()">+ 추가</button>
+  </div>
+</nav>
+
+<div class="sidebar" id="sidebar">
+  <div class="cat-group-title">카테고리</div>
+  <div id="catList"></div>
+</div>
+
+<div class="main">
+  <div class="section-header">
+    <div>
+      <span class="section-title" id="sectionTitle">전체</span>
+      <span class="section-sub" id="sectionSub"></span>
+    </div>
+    <span class="section-count" id="sectionCount"></span>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<!-- Add Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>레퍼런스 추가</h2>
+    <div class="form-row">
+      <label class="form-label">YouTube / Vimeo URL</label>
+      <input type="text" class="form-input" id="formUrl" placeholder="https://youtube.com/watch?v=...">
+    </div>
+    <div class="form-row">
+      <label class="form-label">제목</label>
+      <input type="text" class="form-input" id="formTitle" placeholder="영상 제목">
+    </div>
+    <div class="form-row">
+      <label class="form-label">카테고리</label>
+      <select class="form-select" id="formCat"></select>
+    </div>
+    <div class="form-row">
+      <label class="form-label">설명 (선택)</label>
+      <textarea class="form-textarea" id="formDesc" placeholder="한 줄 설명"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn-save" onclick="saveItem()">저장</button>
+    </div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+// ── DATA ──────────────────────────────────────────────────────────
+const CATEGORIES = [
+  { id: 'all',     label: '전체',              sub: '' },
+  { id: 'ooh',     label: 'OOH / 아나모픽',    sub: '3D LED 아나모픽 옥외 광고' },
+  { id: 'interactive', label: '인터랙티브',    sub: '관람객 참여형 인스톨레이션' },
+  { id: 'cg3d',    label: '영상 광고 (3D CG)', sub: '하이엔드 3D CG 브랜드 영상' },
+  { id: 'cg2d',    label: '영상 광고 (2D CG)', sub: '2D 모션그래픽 브랜드 필름' },
+  { id: 'exhibition_content', label: '전시 영상 콘텐츠', sub: 'LED 전시 미디어 콘텐츠' },
+  { id: 'exhibition_booth',   label: '전시 부스 제작',   sub: '브랜드 부스·체험 공간' },
+  { id: 'interior', label: '인테리어',          sub: '럭셔리 리테일·팝업 공간' },
+  { id: 'lg',      label: '브랜드 — LG',        sub: 'LG 전시·캠페인' },
+  { id: 'samsung', label: '브랜드 — 삼성',      sub: '삼성 전시·캠페인' },
+  { id: 'apple',   label: '브랜드 — 애플',      sub: 'Apple 리테일·이벤트' },
+];
+
+// DEFAULT_ITEMS and MB_VERSION are loaded from data.js
+
+// ── STATE ─────────────────────────────────────────────────────────
+let items = [];
+let activeCat = 'all';
+let searchQuery = '';
+
+function loadItems() {
+  try {
+    const ver = parseInt(localStorage.getItem('mb_ver') || '0');
+    if (ver < MB_VERSION) {
+      items = [...DEFAULT_ITEMS];
+      localStorage.setItem('mb_ver', String(MB_VERSION));
+      saveItems();
+    } else {
+      items = JSON.parse(localStorage.getItem('mb_items') || 'null') || DEFAULT_ITEMS;
+    }
+  } catch { items = [...DEFAULT_ITEMS]; }
+}
+function saveItems() { localStorage.setItem('mb_items', JSON.stringify(items)); }
+
+// ── RENDER ────────────────────────────────────────────────────────
+function getVideoEmbed(type, vid) {
+  if (type === 'youtube') return `https://www.youtube.com/embed/${vid}?rel=0&modestbranding=1`;
+  if (type === 'vimeo')   return `https://player.vimeo.com/video/${vid}?color=1ed760&byline=0&portrait=0`;
+  return '';
+}
+function getVideoThumb(type, vid) {
+  if (type === 'youtube') return `https://img.youtube.com/vi/${vid}/hqdefault.jpg`;
+  return '';
+}
+
+function renderCats() {
+  const counts = {};
+  CATEGORIES.forEach(c => counts[c.id] = 0);
+  items.forEach(it => {
+    counts['all']++;
+    if (counts[it.cat] !== undefined) counts[it.cat]++;
+    else counts[it.cat] = 1;
+  });
+
+  const list = document.getElementById('catList');
+  list.innerHTML = CATEGORIES.map(c => `
+    <button class="cat-btn ${activeCat === c.id ? 'active' : ''}" onclick="setCategory('${c.id}')">
+      <span>${c.label}</span>
+      <span class="cat-count">${activeCat === 'all' ? counts[c.id] || 0 : (counts[c.id] || 0)}</span>
+    </button>
+  `).join('');
+
+  // populate modal select
+  const sel = document.getElementById('formCat');
+  sel.innerHTML = CATEGORIES.filter(c => c.id !== 'all').map(c =>
+    `<option value="${c.id}">${c.label}</option>`
+  ).join('');
+}
+
+function renderGrid() {
+  const q = searchQuery.toLowerCase();
+  const filtered = items.filter(it => {
+    const matchCat = activeCat === 'all' || it.cat === activeCat;
+    const matchQ = !q || it.title.toLowerCase().includes(q) || (it.desc||'').toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  const cat = CATEGORIES.find(c => c.id === activeCat) || CATEGORIES[0];
+  document.getElementById('sectionTitle').textContent = cat.label;
+  document.getElementById('sectionSub').textContent = cat.sub ? ` — ${cat.sub}` : '';
+  document.getElementById('sectionCount').textContent = `${filtered.length}개`;
+
+  const grid = document.getElementById('grid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <div class="empty-icon">🎬</div>
+      <div class="empty-title">레퍼런스 없음</div>
+      <div class="empty-desc">우측 상단 "+ 추가" 버튼으로 영상을 추가하세요.</div>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(it => {
+    const catLabel = (CATEGORIES.find(c => c.id === it.cat) || {}).label || it.cat;
+    const thumb = getVideoThumb(it.type, it.vid);
+    const embed = getVideoEmbed(it.type, it.vid);
+    return `
+    <div class="card" id="card-${it.id}">
+      <div class="card-thumb">
+        <div class="yt-wrap" id="wrap-${it.id}">
+          <div class="yt-preview" onclick="loadVideo('${it.id}','${embed}')">
+            ${thumb ? `<img src="${thumb}" alt="" loading="lazy">` : ''}
+            <div class="yt-preview-btn">
+              <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </div>
+          </div>
+          <iframe id="iframe-${it.id}" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">${catLabel}</div>
+        <div class="card-title">${it.title}</div>
+        ${it.desc ? `<div class="card-desc">${it.desc}</div>` : ''}
+        <div class="card-footer">
+          <span class="card-source">${it.src || ''}</span>
+          <button class="card-del" onclick="deleteItem('${it.id}')" title="삭제">×</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function render() { renderCats(); renderGrid(); }
+
+function loadVideo(id, embed) {
+  const wrap = document.getElementById(`wrap-${id}`);
+  const iframe = document.getElementById(`iframe-${id}`);
+  if (!wrap || !iframe) return;
+  iframe.src = embed + '&autoplay=1';
+  wrap.classList.add('loaded');
+  const preview = wrap.querySelector('.yt-preview');
+  if (preview) preview.style.display = 'none';
+  iframe.style.display = 'block';
+}
+
+// ── ACTIONS ───────────────────────────────────────────────────────
+function setCategory(id) {
+  activeCat = id;
+  if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
+  render();
+}
+
+function filterCards() {
+  searchQuery = document.getElementById('searchInput').value;
+  renderGrid();
+}
+
+function deleteItem(id) {
+  if (!confirm('이 레퍼런스를 삭제할까요?')) return;
+  items = items.filter(it => it.id !== id);
+  saveItems(); render();
+}
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('open');
+  document.getElementById('formUrl').focus();
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('open');
+  ['formUrl','formTitle','formDesc'].forEach(id => document.getElementById(id).value = '');
+}
+document.getElementById('modalOverlay').addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+
+function parseVideoUrl(url) {
+  // YouTube
+  let m = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([A-Za-z0-9_-]{11})/);
+  if (m) return { type: 'youtube', vid: m[1] };
+  // Vimeo
+  m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (m) return { type: 'vimeo', vid: m[1] };
+  // YouTube shorts
+  m = url.match(/youtube\.com\/shorts\/([A-Za-z0-9_-]{11})/);
+  if (m) return { type: 'youtube', vid: m[1] };
+  return null;
+}
+
+function saveItem() {
+  const url   = document.getElementById('formUrl').value.trim();
+  const title = document.getElementById('formTitle').value.trim();
+  const cat   = document.getElementById('formCat').value;
+  const desc  = document.getElementById('formDesc').value.trim();
+
+  if (!url) { alert('URL을 입력하세요.'); return; }
+  if (!title) { alert('제목을 입력하세요.'); return; }
+
+  const parsed = parseVideoUrl(url);
+  if (!parsed) { alert('YouTube 또는 Vimeo URL만 지원합니다.'); return; }
+
+  const newItem = {
+    id: 'u' + Date.now(),
+    cat, type: parsed.type, vid: parsed.vid, title, desc,
+    src: parsed.type === 'youtube' ? 'YouTube' : 'Vimeo'
+  };
+  items.unshift(newItem);
+  saveItems(); closeModal(); render();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────
+loadItems();
+render();
+</script>
+</body>
+</html>
