@@ -765,8 +765,13 @@ function deleteCustomCat(id) {
 // ── 자동 채우기 ───────────────────────────────────────────────────
 function buildAutoQuery(cat) {
   if (AUTO_QUERIES[cat.id]) return AUTO_QUERIES[cat.id];
-  // Custom category: build from label + sub
-  return `${cat.label} ${cat.sub || ''} marketing reference video`.trim();
+  // Brand category: "브랜드 — POSCO" → "POSCO official brand film commercial"
+  const brandMatch = cat.label.match(/브랜드\s*[—\-]\s*(.+)/);
+  if (brandMatch) {
+    const brand = brandMatch[1].trim();
+    return `"${brand}" official brand film commercial campaign`;
+  }
+  return `${cat.sub || cat.label} brand commercial film campaign`.trim();
 }
 
 function setQty(n) {

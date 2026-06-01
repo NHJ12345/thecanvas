@@ -41,6 +41,7 @@ async function searchYouTube(q, maxResults, key) {
     url.searchParams.set('maxResults', String(maxResults));
     url.searchParams.set('key', key);
     url.searchParams.set('order', 'relevance');
+    url.searchParams.set('videoDuration', 'medium');
 
     const r = await fetch(url.toString());
     const data = await r.json();
@@ -62,7 +63,7 @@ async function searchVimeo(q, maxResults, token) {
     const url = new URL('https://api.vimeo.com/videos');
     url.searchParams.set('query', q);
     url.searchParams.set('per_page', String(maxResults));
-    url.searchParams.set('sort', 'relevant');
+    url.searchParams.set('sort', 'plays');
     url.searchParams.set('filter', 'embeddable');
     url.searchParams.set('filter_embeddable', 'true');
     url.searchParams.set('fields', 'uri,name,description,user,release_time');
