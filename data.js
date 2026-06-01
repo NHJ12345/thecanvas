@@ -1,4 +1,4 @@
-const MB_VERSION = 2;
+const MB_VERSION = 3;
 const DEFAULT_ITEMS = [
   // ── OOH / 아나모픽 (67) ─────────────────────────────────────────────
   { id:'ooh_001', cat:'ooh', type:'youtube', vid:'W3QwiNlsqeY', title:'Crazy 3D Billboards!', desc:'Compilation of 3D anamorphic billboard examples worldwide', src:'What in the World?' },
@@ -246,4 +246,31 @@ const DEFAULT_ITEMS = [
   { id:'apl_004', cat:'apple', type:'youtube', vid:'f36QRp24F5c', title:'iPhone 16 Reveal (4K)', desc:'iPhone 16 공식 공개 영상 4K', src:'Apple Spectrum' },
   { id:'apl_005', cat:'apple', type:'youtube', vid:'70gCxCTpvBg', title:'iPhone 16 Pro Reveal (4K)', desc:'iPhone 16 Pro 공식 공개 영상 4K', src:'Apple Spectrum' },
   { id:'apl_006', cat:'apple', type:'youtube', vid:'YP-ukrBVDH8', title:'Apple iPhone 16 Commercial 2024 – Professional Email Ad', desc:'애플 아이폰 16 2024 공식 TV 광고. 프로페셔널 이메일 편', src:'Commercials Ads Review' },
+
+  // ── 영상 광고 — 3D CG (7) ─────────────────────────────────────────
+  { id:'cg3d_001', cat:'cg3d', type:'youtube', vid:'iORWYvPweWE', title:'VFX Showreel 2024 | Framestore', desc:'Framestore 2024 연간 쇼릴. 250개 이상의 광고·영화 프로젝트 하이라이트', src:'Framestore' },
+  { id:'cg3d_002', cat:'cg3d', type:'youtube', vid:'1HaA5M2_jV4', title:'VFX Showreel 2025 | Framestore', desc:'Framestore 2025 쇼릴. 역대 최다 프로젝트 기록 달성 — 광고·영화·라이드 포함', src:'Framestore' },
+  { id:'cg3d_003', cat:'cg3d', type:'youtube', vid:'jkLTz6Cwk5o', title:'The Mill — Games Reel 2024', desc:'The Mill 게임 시네마틱 릴 2024. 어워드 수상 CG 제작 수준 레퍼런스', src:'The Mill' },
+  { id:'cg3d_004', cat:'cg3d', type:'youtube', vid:'pyJbVcturHI', title:'The Mill | Crowds Reel', desc:'The Mill 군중 시뮬레이션 릴. 대규모 CG 퍼포먼스 영상 제작 기준선', src:'The Mill' },
+  { id:'cg3d_005', cat:'cg3d', type:'youtube', vid:'_tJf-t8kZSI', title:'Accenture Song | VFX Reel', desc:'Accenture Song VFX 릴. 글로벌 브랜드 광고용 CG 비주얼이펙트 쇼케이스', src:'Accenture Song' },
+  { id:'cg3d_006', cat:'cg3d', type:'youtube', vid:'ntjkwIXWtrc', title:'Crush! | iPad Pro | Apple 2024', desc:'Apple M4 iPad Pro 런치 광고 2024. 유압 프레스 파괴 시뮬레이션 CGI — 논란과 함께 화제된 광고', src:'Apple' },
+  { id:'cg3d_007', cat:'cg3d', type:'youtube', vid:'jVP5ViOdJBM', title:'The all-new iPad Pro — Thinpossible | Apple 2024', desc:'Apple iPad Pro M4 얇기를 강조한 CGI 광고. 벤딩 시뮬레이션과 제품 CG 합성', src:'Apple' },
+
+  // ── 영상 광고 — 2D CG (7) ─────────────────────────────────────────
+  { id:'cg2d_001', cat:'cg2d', type:'youtube', vid:'5OF6g3QfhnU', title:'Optious Motion Reel 2024', desc:'Optious 2024 모션 릴. 타이포그래피·브랜드 모션·광고 애니메이션 전문 스튜디오의 기준작', src:'Optious' },
+  { id:'cg2d_002', cat:'cg2d', type:'youtube', vid:'1eQzejdClVY', title:'Airbnb × BUCK Animation Commercial Compilation', desc:'BUCK 스튜디오 × Airbnb 2D 애니메이션 광고 컴필레이션. 빅 브랜드 2D CG 캠페인 레퍼런스', src:'BUCK' },
+  { id:'cg2d_003', cat:'cg2d', type:'youtube', vid:'8ctmWfcHT-M', title:'Motion & Design Showreel 2024', desc:'2024 모션 디자인 상업 프로젝트 컴필레이션. 방송·광고용 2D 모션 범위 확인용', src:'Motion Design' },
+  { id:'cg2d_004', cat:'cg2d', type:'youtube', vid:'6A0cBuIcpxs', title:'Motion Design Showreel 2025 | mynkdzgn', desc:'2025 모션 디자인 쇼릴. 타이포그래피 기반 브랜드 모션 + 광고 애니메이션 하이라이트', src:'mynkdzgn' },
+  { id:'cg2d_005', cat:'cg2d', type:'youtube', vid:'dfLOvlu2B4w', title:'2024 Motion Design Show Reel', desc:'2024 커머셜 모션 디자인 릴. 브랜드 광고용 2D CG 스타일 레인지 참고', src:'Motion Design' },
+  { id:'cg2d_006', cat:'cg2d', type:'youtube', vid:'XRb_qtVnDIM', title:'2024 Motion Graphics and Animation Demo Reel', desc:'2024 모션그래픽·애니메이션 데모릴. 광고·브로드캐스트·브랜드 2D CG 작업물', src:'Motion Design' },
+  { id:'cg2d_007', cat:'cg2d', type:'youtube', vid:'55Z0UWQ-lu8', title:'Motion Design Reel 2024 | Eje in Motion', desc:'Eje in Motion 2024 릴. 방송·브랜드 중심 2D 모션 디자인 스타일 범위', src:'Eje in Motion' },
+
+  // ── 인테리어 (7) ────────────────────────────────────────────────────
+  { id:'int2_001', cat:'interior', type:'youtube', vid:'YVC1979DjQU', title:'Louis Vuitton Flagship Store 5th Avenue NYC — Virtual Tour', desc:'뉴욕 5번가 루이비통 플래그십 스토어 가상 투어 2024. 럭셔리 리테일 공간 설계 레퍼런스', src:'NYC Travel' },
+  { id:'int2_002', cat:'interior', type:'youtube', vid:'nB5WUXC0ChY', title:'New York Flagship CHANEL — Full Store Tour NYC', desc:'뉴욕 샤넬 플래그십 풀 스토어 투어. 럭셔리 패션 리테일 공간 구성 및 VMD 레퍼런스', src:'Luxury Shopping' },
+  { id:'int2_003', cat:'interior', type:'youtube', vid:'iNnQcg7ZD7M', title:'Dior 30 Avenue Montaigne Paris — Luxury Shopping 2024', desc:'파리 디올 본점 30 Montaigne 스토어 투어 2024. 헤리티지 럭셔리 리테일 레퍼런스', src:'Luxury Vlog' },
+  { id:'int2_004', cat:'interior', type:'youtube', vid:'2ub1FWrXLF4', title:"On's Flagship Store London — Designed Like a Science Museum", desc:'런던 On 플래그십 스토어. 과학 박물관처럼 설계된 스포츠 브랜드 체험 공간 — 브랜드 경험 설계 레퍼런스', src:'Dezeen' },
+  { id:'int2_005', cat:'interior', type:'youtube', vid:'XmQb6r_8kUo', title:'Places: Luxury Retail | Retail Design', desc:'큐레이션된 럭셔리 리테일 공간 모음. 글로벌 플래그십·팝업 인테리어 디자인 레퍼런스 컴필레이션', src:'Retail Design' },
+  { id:'int2_006', cat:'interior', type:'youtube', vid:'GeV1lK6SOKc', title:'Paris Luxury Row — Chanel 31 Rue Cambon + Dior 30 Montaigne + LV', desc:'파리 럭셔리 플래그십 투어. 샤넬·디올·루이비통 파리 본점 내부 공간 비교 레퍼런스', src:'Luxury Vlog' },
+  { id:'int2_007', cat:'interior', type:'youtube', vid:'asWNexW_mHk', title:'Paris Dior Montaigne — Full Store Tour & Dior Restaurant', desc:'파리 디올 몽테뉴 플래그십 풀 투어. 식당·갤러리·리테일 통합 공간 설계 레퍼런스', src:'Paris Vlog' },
 ];
