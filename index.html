@@ -446,7 +446,12 @@
       <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
         <span class="qty-label" style="white-space:nowrap;flex-shrink:0">검색어</span>
         <input type="text" id="autoQueryInput" class="search-q" style="flex:1;font-size:12px;padding:6px 10px"
-          placeholder="검색어를 직접 수정하세요">
+          placeholder="검색어 직접 수정 가능">
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+        <span class="qty-label" style="white-space:nowrap;flex-shrink:0">채널 ID</span>
+        <input type="text" id="channelIdInput" class="search-q" style="flex:1;font-size:12px;padding:6px 10px"
+          placeholder="공식 채널만 검색 (선택) — YouTube 채널 ID 입력">
       </div>
     </div>
 
@@ -830,7 +835,9 @@ async function doAutoFill() {
   document.getElementById('searchFooter').style.display = 'none';
 
   try {
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`);
+    const chId = document.getElementById('channelIdInput')?.value.trim() || '';
+    if (chId) localStorage.setItem(`mb_ch_${activeCat}`, chId);
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}${chId ? '&channelId='+encodeURIComponent(chId) : ''}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
     _searchResults = data;
@@ -857,6 +864,9 @@ function openSearchOverlay() {
   document.getElementById('searchPanelTitle').textContent =
     `"${cat ? cat.label : activeCat}" 레퍼런스 검색`;
   document.getElementById('autoQueryInput').value = cat ? buildAutoQuery(cat) : '';
+  // Restore saved channel ID for this category
+  const savedCh = localStorage.getItem(`mb_ch_${activeCat}`) || '';
+  document.getElementById('channelIdInput').value = savedCh;
   document.getElementById('searchOverlay').classList.add('open');
   document.getElementById('searchQuery').focus();
   document.getElementById('searchResultsWrap').innerHTML =
@@ -884,7 +894,8 @@ async function doSearch() {
   document.getElementById('searchFooter').style.display = 'none';
 
   try {
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`);
+    const chId = document.getElementById('channelIdInput')?.value.trim() || '';
+    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}${chId ? '&channelId='+encodeURIComponent(chId) : ''}`);
     const data = await res.json();
     if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
     _searchResults = data;

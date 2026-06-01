@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-  const { q, maxResults = '20' } = req.query;
+  const { q, maxResults = '20', channelId } = req.query;
   if (!q) return res.status(400).json({ error: 'q parameter required' });
 
   const max = Math.min(parseInt(maxResults) || 20, 50);
@@ -17,7 +17,7 @@ export default async function handler(req, res) {
   }
 
   const [ytResults, vimeoResults] = await Promise.all([
-    ytKey ? searchYouTube(q, max, ytKey) : [],
+    ytKey ? searchYouTube(q, max, ytKey, channelId) : [],
     vimeoToken ? searchVimeo(q, Math.ceil(max / 2), vimeoToken) : [],
   ]);
 
@@ -32,7 +32,7 @@ export default async function handler(req, res) {
   res.json(merged.slice(0, max * 2));
 }
 
-async function searchYouTube(q, maxResults, key) {
+async function searchYouTube(q, maxResults, key, channelId) {
   try {
     const url = new URL('https://www.googleapis.com/youtube/v3/search');
     url.searchParams.set('part', 'snippet');
@@ -41,7 +41,7 @@ async function searchYouTube(q, maxResults, key) {
     url.searchParams.set('maxResults', String(maxResults));
     url.searchParams.set('key', key);
     url.searchParams.set('order', 'relevance');
-    url.searchParams.set('videoDuration', 'medium');
+    if (channelId) url.searchParams.set('channelId', channelId);
 
     const r = await fetch(url.toString());
     const data = await r.json();
