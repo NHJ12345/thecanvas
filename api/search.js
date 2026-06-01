@@ -57,15 +57,40 @@ async function searchYouTube(q, maxResults, key, channelId) {
     const data = await r.json();
     if (data.error) return [];
 
-    return (data.items || []).map(item => ({
-      vid: item.id.videoId,
-      title: item.snippet.title,
-      desc: (item.snippet.description || '').slice(0, 200),
-      src: item.snippet.channelTitle,
-      published: item.snippet.publishedAt?.slice(0, 10) || '',
-      type: 'youtube',
-    }));
+    const items = data.items || [];
+    if (!items.length) return [];
+
+    // Fetch video durations for classification
+    const ids = items.map(i => i.id.videoId).join(',');
+    const durUrl = `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${ids}&key=${key}`;
+    const durData = await fetch(durUrl).then(r => r.json()).catch(() => ({ items: [] }));
+    const durMap = {};
+    (durData.items || []).forEach(v => { durMap[v.id] = v.contentDetails?.duration || ''; });
+
+    return items.map(item => {
+      const vid = item.id.videoId;
+      const videoType = classifyDuration(durMap[vid] || '');
+      return {
+        vid,
+        title: item.snippet.title,
+        desc: (item.snippet.description || '').slice(0, 200),
+        src: item.snippet.channelTitle,
+        published: item.snippet.publishedAt?.slice(0, 10) || '',
+        type: 'youtube',
+        videoType,
+      };
+    });
   } catch { return []; }
+}
+
+function classifyDuration(iso) {
+  if (!iso) return '';
+  const m = iso.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+  if (!m) return '';
+  const sec = (parseInt(m[1]||0)*3600) + (parseInt(m[2]||0)*60) + parseInt(m[3]||0);
+  if (sec <= 180) return '광고';
+  if (sec <= 600) return '단편';
+  return '영상';
 }
 
 async function searchVimeo(q, maxResults, token) {

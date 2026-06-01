@@ -451,8 +451,11 @@
       <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
         <span class="qty-label" style="white-space:nowrap;flex-shrink:0">채널 ID</span>
         <input type="text" id="channelIdInput" class="search-q" style="flex:1;font-size:12px;padding:6px 10px"
-          placeholder="공식 채널만 검색 (선택) — YouTube 채널 ID 입력">
+          placeholder="공식 채널만 검색 (선택)">
+        <button class="btn-do-search" id="btnFindChannel" onclick="findOfficialChannel()"
+          style="white-space:nowrap;font-size:11px;padding:6px 12px">🔍 공식 채널</button>
       </div>
+      <div id="channelPickerWrap" style="display:none;margin-top:6px;background:var(--mid);border-radius:6px;overflow:hidden"></div>
     </div>
 
     <!-- 직접 검색 -->
@@ -822,6 +825,39 @@ function setQty(n) {
   });
 }
 
+async function findOfficialChannel() {
+  const cat = getCategories().find(c => c.id === activeCat);
+  const brand = extractBrand(cat);
+  if (!brand) { alert('브랜드 카테고리에서만 사용 가능합니다.'); return; }
+  const btn = document.getElementById('btnFindChannel');
+  const wrap = document.getElementById('channelPickerWrap');
+  btn.disabled = true; btn.textContent = '검색 중...';
+  wrap.style.display = 'none';
+  try {
+    const res = await fetch(`/api/channel?brand=${encodeURIComponent(brand)}`);
+    const channels = await res.json();
+    if (!channels.length) { wrap.innerHTML = '<div style="padding:10px;font-size:12px;color:var(--silver)">채널을 찾을 수 없습니다.</div>'; wrap.style.display='block'; return; }
+    wrap.innerHTML = channels.map(ch => `
+      <div onclick="selectChannel('${ch.id}','${ch.title.replace(/'/g,"\\'")}',this)"
+        style="display:flex;align-items:center;gap:10px;padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border)"
+        onmouseover="this.style.background='var(--card)'" onmouseout="this.style.background=''">
+        ${ch.thumb ? `<img src="${ch.thumb}" style="width:32px;height:32px;border-radius:50%;flex-shrink:0">` : ''}
+        <div style="min-width:0">
+          <div style="font-size:12px;font-weight:700;color:var(--white)">${ch.title}</div>
+          <div style="font-size:10px;color:var(--silver);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${ch.desc||''}</div>
+        </div>
+      </div>`).join('');
+    wrap.style.display = 'block';
+  } catch(e) { alert('오류: ' + e.message); }
+  finally { btn.disabled=false; btn.textContent='🔍 공식 채널'; }
+}
+
+function selectChannel(id, title, el) {
+  document.getElementById('channelIdInput').value = id;
+  localStorage.setItem(`mb_ch_${activeCat}`, id);
+  document.getElementById('channelPickerWrap').style.display = 'none';
+}
+
 function extractBrand(cat) {
   if (!cat) return '';
   const m = cat.label.match(/브랜드\s*[—\-]\s*(.+)/);
@@ -938,7 +974,7 @@ function _renderSearchResults() {
       <img class="s-thumb" src="${thumb}" alt="" onclick="window.open('https://youtu.be/${r.vid}','_blank')" loading="lazy">
       <div class="s-info">
         <div class="s-title" onclick="window.open('https://youtu.be/${r.vid}','_blank')">${r.title}</div>
-        <div class="s-src">${r.src}${r.published ? ' · ' + r.published : ''}</div>
+        <div class="s-src">${r.src}${r.published ? ' · ' + r.published : ''}${r.videoType ? ` · <span style="color:var(--green);font-weight:700">${r.videoType}</span>` : ''}</div>
         ${r.desc ? `<div class="s-desc">${r.desc}</div>` : ''}
       </div>
       <button class="btn-add-r ${added ? 'added' : ''}" id="btn-sr-${i}"
