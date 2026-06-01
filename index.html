@@ -492,6 +492,11 @@ const CATEGORIES = [
   { id: 'lg',               label: '브랜드 — LG',        sub: 'LG 전시·캠페인' },
   { id: 'samsung',          label: '브랜드 — 삼성',      sub: '삼성 전시·캠페인' },
   { id: 'apple',            label: '브랜드 — 애플',      sub: 'Apple 리테일·이벤트' },
+  { id: 'posco',            label: '브랜드 — POSCO',     sub: '포스코 공식 브랜드 영상' },
+  { id: 'shinsegae',        label: '브랜드 — 신세계',    sub: '신세계 브랜드 영상' },
+  { id: 'lguplus',          label: '브랜드 — LG U+',     sub: 'LG유플러스 브랜드 영상' },
+  { id: 'samsungsemi',      label: '브랜드 — 삼성반도체', sub: '삼성전자 반도체 브랜드 영상' },
+  { id: 'google',           label: '브랜드 — Google',    sub: 'Google Korea 브랜드 영상' },
 ];
 
 // Auto-search query map for built-in categories
@@ -506,6 +511,20 @@ const AUTO_QUERIES = {
   lg:                'LG brand commercial campaign 2024',
   samsung:           'Samsung brand commercial campaign 2024',
   apple:             'Apple brand film commercial 2024',
+  posco:             'POSCO 포스코 brand film',
+  shinsegae:         '신세계 SHINSEGAE brand commercial campaign',
+  lguplus:           'LG유플러스 brand commercial campaign',
+  samsungsemi:       'Samsung semiconductor brand film',
+  google:            'Google Korea brand commercial',
+};
+
+// Official channel IDs for brand categories
+const CHANNEL_IDS = {
+  posco:        'UCGu-RtRyCaWQl32YoOh4WNg', // 포스코 스튜디오
+  shinsegae:    'UCipfA-lwhCHsZm3fY0OMVIQ', // 신세계백화점_SHINSEGAE
+  lguplus:      'UCp3BSINVC7Ggj4kChEUiy7Q', // LG유플러스
+  samsungsemi:  'UCWuCkZjfPwkHtjeVvB1LnVw', // Samsung Semiconductor Newsroom
+  google:       'UCdc_SRhKUlH3grljQXA0skw', // Google Korea
 };
 
 // DEFAULT_ITEMS, MB_VERSION loaded from data.js
@@ -910,9 +929,10 @@ function openSearchOverlay() {
   document.getElementById('searchPanelTitle').textContent =
     `"${cat ? cat.label : activeCat}" 레퍼런스 검색`;
   document.getElementById('autoQueryInput').value = cat ? buildAutoQuery(cat) : '';
-  // Restore saved channel ID for this category
+  // Use hardcoded channel ID first, then localStorage fallback
+  const hardcodedCh = CHANNEL_IDS[activeCat] || '';
   const savedCh = localStorage.getItem(`mb_ch_${activeCat}`) || '';
-  document.getElementById('channelIdInput').value = savedCh;
+  document.getElementById('channelIdInput').value = hardcodedCh || savedCh;
   document.getElementById('searchOverlay').classList.add('open');
   document.getElementById('searchQuery').focus();
   document.getElementById('searchResultsWrap').innerHTML =
