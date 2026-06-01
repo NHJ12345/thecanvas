@@ -610,7 +610,7 @@ function renderGrid() {
     const thumb = getVideoThumb(it.type, it.vid);
     const embed = getVideoEmbed(it.type, it.vid);
     return `
-    <div class="card" id="card-${it.id}">
+    <div class="card" id="card-${it.id}" data-vid="${it.vid}" data-type="${it.type}">
       <div class="card-thumb">
         <div class="yt-wrap" id="wrap-${it.id}">
           <div class="yt-preview" onclick="loadVideo('${it.id}','${embed}')">
@@ -635,7 +635,40 @@ function renderGrid() {
   }).join('');
 }
 
-function render() { renderCats(); renderGrid(); }
+function render() { renderCats(); renderGrid(); schedulePrivacyCheck(); }
+
+// ── 비공개·삭제 영상 자동 제거 ─────────────────────────────────────
+const _checkedVids = new Set();
+let _privacyObserver = null;
+
+function schedulePrivacyCheck() {
+  if (!('IntersectionObserver' in window)) return;
+  if (_privacyObserver) _privacyObserver.disconnect();
+  _privacyObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const card = e.target;
+      const vid = card.dataset.vid;
+      const type = card.dataset.type;
+      if (!vid || type !== 'youtube' || _checkedVids.has(vid)) return;
+      _checkedVids.add(vid);
+      _privacyObserver.unobserve(card);
+      fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${vid}&format=json`)
+        .then(r => { if (!r.ok) removeUnavailable(vid); })
+        .catch(() => removeUnavailable(vid));
+    });
+  }, { rootMargin: '200px' });
+  document.querySelectorAll('.card[data-vid][data-type="youtube"]').forEach(c => _privacyObserver.observe(c));
+}
+
+function removeUnavailable(vid) {
+  // Remove from DOM
+  document.querySelectorAll(`.card[data-vid="${vid}"]`).forEach(c => c.remove());
+  // Remove from items array + persist
+  const before = items.length;
+  items = items.filter(it => it.vid !== vid);
+  if (items.length !== before) { saveItems(); renderCats(); }
+}
 
 function loadVideo(id, embed) {
   const wrap = document.getElementById(`wrap-${id}`);
@@ -869,8 +902,11 @@ function _renderSearchResults() {
     wrap.innerHTML = '<div class="search-msg">검색 결과가 없습니다. 다른 검색어를 시도해보세요.</div>';
     return;
   }
+  // Filter already-known-unavailable vids from search results
+  _searchResults = _searchResults.filter(r => !_checkedVids.has(r.vid) || document.querySelector(`.card[data-vid="${r.vid}"]`));
   wrap.innerHTML = _searchResults.map((r, i) => {
-    const thumb = `https://img.youtube.com/vi/${r.vid}/mqdefault.jpg`;
+    const thumb = r.type === 'vimeo'
+      ? '' : `https://img.youtube.com/vi/${r.vid}/mqdefault.jpg`;
     const added = _addedVids.has(r.vid);
     return `
     <div class="search-result-row" id="sr-${i}">
