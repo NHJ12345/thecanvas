@@ -443,7 +443,11 @@
         </div>
         <button class="btn-auto-fill" id="btnAutoFill" onclick="doAutoFill()">▶ 자동으로 채우기</button>
       </div>
-      <div class="auto-query-preview" id="autoQueryPreview"></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:8px;">
+        <span class="qty-label" style="white-space:nowrap;flex-shrink:0">검색어</span>
+        <input type="text" id="autoQueryInput" class="search-q" style="flex:1;font-size:12px;padding:6px 10px"
+          placeholder="검색어를 직접 수정하세요">
+      </div>
     </div>
 
     <!-- 직접 검색 -->
@@ -765,13 +769,12 @@ function deleteCustomCat(id) {
 // ── 자동 채우기 ───────────────────────────────────────────────────
 function buildAutoQuery(cat) {
   if (AUTO_QUERIES[cat.id]) return AUTO_QUERIES[cat.id];
-  // Brand category: "브랜드 — POSCO" → "POSCO official brand film commercial"
   const brandMatch = cat.label.match(/브랜드\s*[—\-]\s*(.+)/);
   if (brandMatch) {
     const brand = brandMatch[1].trim();
-    return `"${brand}" official brand film commercial campaign`;
+    return `${brand} brand commercial 2024 2025`;
   }
-  return `${cat.sub || cat.label} brand commercial film campaign`.trim();
+  return `${cat.sub || cat.label} brand commercial 2024 2025`.trim();
 }
 
 function setQty(n) {
@@ -784,13 +787,12 @@ function setQty(n) {
 async function doAutoFill() {
   const cat = getCategories().find(c => c.id === activeCat);
   if (!cat) return;
-  const q = buildAutoQuery(cat);
+  const q = document.getElementById('autoQueryInput').value.trim() || buildAutoQuery(cat);
   const btn = document.getElementById('btnAutoFill');
   const wrap = document.getElementById('searchResultsWrap');
 
   btn.disabled = true;
   btn.textContent = '검색 중...';
-  document.getElementById('autoQueryPreview').textContent = `검색어: "${q}"`;
   wrap.innerHTML = '<div class="search-msg">자동으로 레퍼런스를 찾는 중...</div>';
   document.getElementById('searchFooter').style.display = 'none';
 
@@ -821,8 +823,7 @@ function openSearchOverlay() {
   const cat = getCategories().find(c => c.id === activeCat);
   document.getElementById('searchPanelTitle').textContent =
     `"${cat ? cat.label : activeCat}" 레퍼런스 검색`;
-  document.getElementById('autoQueryPreview').textContent =
-    cat ? `자동 검색어: "${buildAutoQuery(cat)}"` : '';
+  document.getElementById('autoQueryInput').value = cat ? buildAutoQuery(cat) : '';
   document.getElementById('searchOverlay').classList.add('open');
   document.getElementById('searchQuery').focus();
   document.getElementById('searchResultsWrap').innerHTML =
