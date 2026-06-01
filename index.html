@@ -822,10 +822,17 @@ function setQty(n) {
   });
 }
 
+function extractBrand(cat) {
+  if (!cat) return '';
+  const m = cat.label.match(/브랜드\s*[—\-]\s*(.+)/);
+  return m ? m[1].trim() : '';
+}
+
 async function doAutoFill() {
   const cat = getCategories().find(c => c.id === activeCat);
   if (!cat) return;
   const q = document.getElementById('autoQueryInput').value.trim() || buildAutoQuery(cat);
+  const brand = extractBrand(cat);
   const btn = document.getElementById('btnAutoFill');
   const wrap = document.getElementById('searchResultsWrap');
 
@@ -837,7 +844,10 @@ async function doAutoFill() {
   try {
     const chId = document.getElementById('channelIdInput')?.value.trim() || '';
     if (chId) localStorage.setItem(`mb_ch_${activeCat}`, chId);
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}${chId ? '&channelId='+encodeURIComponent(chId) : ''}`);
+    let url = `/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`;
+    if (chId) url += `&channelId=${encodeURIComponent(chId)}`;
+    if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+    const res = await fetch(url);
     const data = await res.json();
     if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
     _searchResults = data;
@@ -895,7 +905,11 @@ async function doSearch() {
 
   try {
     const chId = document.getElementById('channelIdInput')?.value.trim() || '';
-    const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}${chId ? '&channelId='+encodeURIComponent(chId) : ''}`);
+    const brand = extractBrand(getCategories().find(c => c.id === activeCat));
+    let url = `/api/search?q=${encodeURIComponent(q)}&maxResults=${_autoFillQty}`;
+    if (chId) url += `&channelId=${encodeURIComponent(chId)}`;
+    if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+    const res = await fetch(url);
     const data = await res.json();
     if (data.error) throw new Error(data.error + (data.hint ? '\n\n' + data.hint : ''));
     _searchResults = data;

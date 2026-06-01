@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-  const { q, maxResults = '20', channelId } = req.query;
+  const { q, maxResults = '20', channelId, brand } = req.query;
   if (!q) return res.status(400).json({ error: 'q parameter required' });
 
   const max = Math.min(parseInt(maxResults) || 20, 50);
@@ -17,16 +17,26 @@ export default async function handler(req, res) {
   }
 
   const [ytResults, vimeoResults] = await Promise.all([
-    ytKey ? searchYouTube(q, max, ytKey, channelId) : [],
-    vimeoToken ? searchVimeo(q, Math.ceil(max / 2), vimeoToken) : [],
+    ytKey ? searchYouTube(q, max * 2, ytKey, channelId) : [],
+    vimeoToken ? searchVimeo(q, max, vimeoToken) : [],
   ]);
+
+  // Brand filter: if brand specified, only keep results where title contains brand name
+  const brandFilter = brand ? brand.trim().toLowerCase() : null;
+  const filterByBrand = (r) => {
+    if (!brandFilter) return true;
+    return r.title.toLowerCase().includes(brandFilter);
+  };
+
+  const filteredYt = ytResults.filter(filterByBrand);
+  const filteredVimeo = vimeoResults.filter(filterByBrand);
 
   // Merge: interleave YouTube and Vimeo results
   const merged = [];
-  const maxLen = Math.max(ytResults.length, vimeoResults.length);
+  const maxLen = Math.max(filteredYt.length, filteredVimeo.length);
   for (let i = 0; i < maxLen; i++) {
-    if (i < ytResults.length) merged.push(ytResults[i]);
-    if (i < vimeoResults.length) merged.push(vimeoResults[i]);
+    if (i < filteredYt.length) merged.push(filteredYt[i]);
+    if (i < filteredVimeo.length) merged.push(filteredVimeo[i]);
   }
 
   res.json(merged.slice(0, max * 2));
